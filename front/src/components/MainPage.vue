@@ -13,7 +13,7 @@
           :class="isExist(animalKind) ? 'disabled' : ''"
           @click="isExist(animalKind) ? toGetOld(animalKind.id) : createAnimal(animalKind.id)"
       >
-        <img class="icon" :src="getImgUrl(animalKind.kind)">
+        <img class="icon" :src="'/images/' + animalKind.kind + '.png'">
       </div>
     </div>
     <div class="content">
@@ -23,7 +23,7 @@
             :key="animal.id"
             style="width: 30px"
             class="animal"
-            :src="getImgUrl(animal.animal_kind.kind + '_big')"
+            :src="'/images/' + animal.animal_kind.kind + '_big.png'"
             :id="animal.animal_kind.kind"
             @click="getInfo(animal.id)"
         >
@@ -36,7 +36,10 @@
               ? 'Собака'
               : info.animal_kind.kind === 'bird'
               ? 'Птица'
-              : 'Медведь'
+              : info.animal_kind.kind === 'bear'
+              ? 'Медведь'
+              : ''
+
           }} {{ Math.floor(info.age) + formatAgeString(info.age) }}
         </span>
       </div>
@@ -61,7 +64,6 @@ export default {
     container: function () {
       return document.getElementById( 'container' )
     },
-
   },
   async mounted() {
     axios.defaults.baseURL = process.env.VUE_APP_API_URL
@@ -76,8 +78,8 @@ export default {
   },
   methods: {
     getImgUrl(pet) {
-      var images = require.context('../assets/', false, /\.png$/)
-      return images('./' + pet + ".png")
+      var images = require.context('/', false, /\.png$/)
+      return images('/' + pet + ".png")
     },
     getAnimalKinds: async function () {
       const response = await axios.get('animal_kinds');
